@@ -1,0 +1,3 @@
+[submodule "Labyrinth"]
+	path = Labyrinth
+	url = git@github.com:mthorin/Labyrinth.git
