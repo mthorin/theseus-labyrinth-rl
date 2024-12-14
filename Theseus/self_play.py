@@ -20,7 +20,7 @@ def self_play(n, data_file_path):
     ruleset = RuleSet()
     utils.enable_colours(True)
 
-    # intialize network #TODO
+    # initialize network #TODO
     network = None
 
     loop = tqdm(total=n, position=0, leave=False)
