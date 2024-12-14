@@ -6,8 +6,9 @@ from Labyrinth.labyrinth import Labyrinth, RuleSet
 from Labyrinth.theseus import Theseus
 from Labyrinth.player import all_player_colours
 
-import pickle
 from tqdm import tqdm
+
+from Theseus.theseus_network import TheseusNetwork
 
 CURRENT_BEST_MODEL_PATH = 'theseus_best.pt'
 
@@ -16,7 +17,7 @@ def evaluate(n, new_model):
     utils.enable_colours(True)
 
     # initialize current best network
-    curr_best_network = None # TODO: model = TheModelClass(*args, **kwargs)
+    curr_best_network = TheseusNetwork()
     curr_best_network.load_state_dict(torch.load(CURRENT_BEST_MODEL_PATH, weights_only=True))
     curr_best_network.eval()
 

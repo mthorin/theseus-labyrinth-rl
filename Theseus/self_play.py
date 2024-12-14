@@ -1,8 +1,12 @@
 import os
+
+import torch
 from Labyrinth import utils
 from Labyrinth.labyrinth import Labyrinth, RuleSet
 from Labyrinth.theseus import Theseus
 from Labyrinth.player import all_player_colours
+from Theseus.theseus_network import TheseusNetwork
+from evaluator import CURRENT_BEST_MODEL_PATH
 
 import pickle
 from tqdm import tqdm
@@ -20,8 +24,10 @@ def self_play(n, data_file_path):
     ruleset = RuleSet()
     utils.enable_colours(True)
 
-    # initialize network #TODO
-    network = None
+    # initialize network
+    network = TheseusNetwork()
+    network.load_state_dict(torch.load(CURRENT_BEST_MODEL_PATH, weights_only=True))
+    network.eval()
 
     loop = tqdm(total=n, position=0, leave=False)
     for i in range(n):
