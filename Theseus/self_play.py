@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 MAX_DATA_SIZE = 500000
 
-def self_play(n, data_file_path):
+def self_play(data_file_path, n=5000):
     # Load previous game list
     if os.path.exists(data_file_path):
         with open(data_file_path, 'rb') as file:

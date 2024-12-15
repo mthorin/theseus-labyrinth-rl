@@ -12,7 +12,7 @@ from Theseus.theseus_network import TheseusNetwork
 
 CURRENT_BEST_MODEL_PATH = 'theseus_best.pt'
 
-def evaluate(n, new_model):
+def evaluate(new_model, n=100):
     ruleset = RuleSet()
     utils.enable_colours(True)
 
