@@ -1,3 +1,4 @@
+import os
 import random
 
 import torch
@@ -10,9 +11,12 @@ from tqdm import tqdm
 
 from Theseus.theseus_network import TheseusNetwork
 
-CURRENT_BEST_MODEL_PATH = 'theseus_best.pt'
+CURRENT_BEST_MODEL_PATH = 'Theseus/theseus_best.pt'
 
 def evaluate(new_model, n=100):
+    if not os.path.exists(CURRENT_BEST_MODEL_PATH):
+        torch.save(new_model.state_dict(), CURRENT_BEST_MODEL_PATH)
+        
     ruleset = RuleSet()
     utils.enable_colours(True)
 
