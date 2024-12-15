@@ -3,7 +3,7 @@ from tqdm import tqdm
 import torch
 import torch.nn as nn
 from Labyrinth.tile import TileMovement
-from self_play import MAX_DATA_SIZE
+from self_play import MAX_DATA_SIZE, TensorLog
 from theseus_trainer import DATA_FILE_PATH
 from Labyrinth import utils
 from Labyrinth.labyrinth import Labyrinth, RuleSet
@@ -41,7 +41,7 @@ class SpectatedPlayer(Player):
         pos_y = min(pos_y, 6)
         m[pos_x + (7 * pos_y)] = 1
 
-        self.data_bank.append(tuple([x, p, m]))
+        self.data_bank(tuple([x, p, m]))
 
         return best_slide, best_orientation, best_path
     
@@ -66,10 +66,10 @@ def main():
     loop = tqdm(total=5000, position=0, leave=False)
     for n in range(5000):
         
-        game_data = {color: [] for color in all_player_colours}
+        game_data = TensorLog()
 
         # players = [Theseus(colour, network, exploration_weight=1, data_bank=game_data[colour]) for colour in all_player_colours]
-        players = [SpectatedPlayer(colour, game_data[colour]) for colour in all_player_colours]
+        players = [SpectatedPlayer(colour, game_data.get_log_function(colour)) for colour in all_player_colours]
 
         lab = Labyrinth(ruleset, players)
 
@@ -78,7 +78,7 @@ def main():
             lab.make_turn()
             turns += 1
 
-        for colour, results in game_data.items():
+        for colour, results in game_data.get_all_entries().items():
             value = 0
             if colour == lab.who_won().colour:
                 value = 1

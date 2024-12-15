@@ -8,4 +8,4 @@ if os.path.exists('Theseus/data.pkl'):
 else:
     data = []
 
-print(data[1][0])
+print(len(data))

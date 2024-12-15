@@ -13,17 +13,42 @@ from tqdm import tqdm
 
 MAX_DATA_SIZE = 500000
 
-# class TensorLog:
-#     def __init__(self):
-#         self.log_entries = []
-#         self.calls = 0
+class TensorLog:
+    entries = {}
+    calls = 0
 
-#     def add_entry(self, entry):
-#         self.log_entries.append(entry)
-#         self.calls += 1
+    def __init__(self):
+        TensorLog.entries = {color: [] for color in all_player_colours}
+        TensorLog.calls = 0
 
-#     def get_entries(self):
-#         return self.log_entries
+    def get_log_function(self, colour):
+        if all_player_colours.index(colour) == 0:
+            return self.save_entry_0
+        elif all_player_colours.index(colour) == 1:
+            return self.save_entry_1
+        elif all_player_colours.index(colour) == 2:
+            return self.save_entry_2
+        else: 
+            return self.save_entry_3
+        
+    def save_entry_1(self, entry):
+        self.save_entry(entry, all_player_colours[1])
+
+    def save_entry_2(self, entry):
+        self.save_entry(entry, all_player_colours[2])
+
+    def save_entry_3(self, entry):
+        self.save_entry(entry, all_player_colours[3])
+
+    def save_entry_0(self, entry):
+        self.save_entry(entry, all_player_colours[0])
+
+    def save_entry(self, entry, colour):
+        TensorLog.entries[colour].append(entry)
+        TensorLog.calls += 1
+
+    def get_all_entries(self):
+        return self.entries
 
 def self_play(data_file_path, n=1000):
     # Load previous game list
@@ -43,8 +68,8 @@ def self_play(data_file_path, n=1000):
 
     loop = tqdm(total=n, position=0, leave=False)
     for i in range(n):
-        game_data = {color: [] for color in all_player_colours}
-        players = [Theseus(colour, network, exploration_weight=1, data_bank=game_data[colour]) for colour in all_player_colours]
+        game_data = TensorLog()
+        players = [Theseus(colour, network, exploration_weight=1, data_bank=game_data.get_log_function(colour)) for colour in all_player_colours]
 
         lab = Labyrinth(ruleset, players)
 
