@@ -1,37 +1,45 @@
 import os
-
+import pickle
+import sys
+from tqdm import tqdm
 import torch
+import torch.nn as nn
+
+module_path = os.path.abspath("/Users/matt/Documents/LabrynthGo/theseus-larbryinth-rl/Labyrinth")
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+from self_play import MAX_DATA_SIZE
+from theseus_trainer import DATA_FILE_PATH
 from Labyrinth import utils
 from Labyrinth.labyrinth import Labyrinth, RuleSet
-from Labyrinth.theseus import Theseus
 from Labyrinth.player import all_player_colours
-from theseus_network import TheseusNetwork
-from evaluator import CURRENT_BEST_MODEL_PATH
+from Labyrinth.theseus import Theseus
 
-import pickle
-from tqdm import tqdm
 
-MAX_DATA_SIZE = 500000
+class DummyNet(nn.Module):
+  def __init__(self):
+    super().__init__()
 
-def self_play(data_file_path, n=5000):
-    # Load previous game list
-    if os.path.exists(data_file_path):
-        with open(data_file_path, 'rb') as file:
-            data = pickle.load(file)
-    else:
-        data = []
-
+  def forward(self, x, slide=True, move=True, value=True):
+    p = torch.rand(48)
+    m = torch.rand(49)
+    y = torch.rand(1)
+    return p, m, y
+  
+def main():
     ruleset = RuleSet()
     utils.enable_colours(True)
 
-    # initialize network
-    network = TheseusNetwork()
-    network.load_state_dict(torch.load(CURRENT_BEST_MODEL_PATH, weights_only=True))
-    network.eval()
+    data = []
 
-    loop = tqdm(total=n, position=0, leave=False)
-    for i in range(n):
+    network = DummyNet()
+    
+    loop = tqdm(total=50, position=0, leave=False)
+    for n in range(50):
+        
         game_data = {color: [] for color in all_player_colours}
+
         players = [Theseus(colour, network, exploration_weight=1, data_bank=game_data[colour]) for colour in all_player_colours]
 
         lab = Labyrinth(ruleset, players)
@@ -40,6 +48,7 @@ def self_play(data_file_path, n=5000):
         while lab.who_won() is None:
             lab.make_turn()
             turns += 1
+            print(turns)
 
         for colour, results in game_data.items():
             value = 0
@@ -55,5 +64,8 @@ def self_play(data_file_path, n=5000):
         loop.set_description('Games Played: {}'.format(n))
 
     # Save list
-    with open(data_file_path, 'wb') as file:
+    with open(DATA_FILE_PATH, 'wb') as file:
         pickle.dump(data, file)
+
+if __name__ == '__main__':
+    main()

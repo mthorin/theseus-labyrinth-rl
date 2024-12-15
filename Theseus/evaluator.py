@@ -9,7 +9,7 @@ from Labyrinth.player import all_player_colours
 
 from tqdm import tqdm
 
-from Theseus.theseus_network import TheseusNetwork
+from theseus_network import TheseusNetwork
 
 CURRENT_BEST_MODEL_PATH = 'Theseus/theseus_best.pt'
 

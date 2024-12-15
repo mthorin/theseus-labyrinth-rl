@@ -163,3 +163,4 @@ cython_debug/
 
 Theseus/data.pkl
 Theseus/model_archive/
+Labyrinth.egg-info

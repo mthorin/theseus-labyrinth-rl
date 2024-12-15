@@ -1,9 +1,9 @@
 import os
 import re
 import torch
-from Theseus.evaluator import evaluate
-from Theseus.self_play import self_play
-from Theseus.optimization import optimize
+from evaluator import evaluate
+from self_play import self_play
+from optimization import optimize
 
 DATA_FILE_PATH = 'Theseus/data.pkl'
 ARCHIVE_LOCATION = 'Theseus/model_archive'

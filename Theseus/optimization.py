@@ -1,7 +1,7 @@
 import pickle
 import torch
 from tqdm import tqdm
-from Theseus.theseus_network import TheseusNetwork
+from theseus_network import TheseusNetwork
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 import torch.nn as nn
