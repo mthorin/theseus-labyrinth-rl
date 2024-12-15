@@ -36,6 +36,7 @@ def main():
 
     while 1:
         latest_version += 1
+        print(f"Optimization, evaluation, and self-play for version {latest_version}")
         new_model = optimize(device, DATA_FILE_PATH, latest_file)
         torch.save(new_model.state_dict(), f"{ARCHIVE_LOCATION}/theseus_v{latest_version}.pt")
         evaluate(new_model)

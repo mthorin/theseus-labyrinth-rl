@@ -13,7 +13,19 @@ from tqdm import tqdm
 
 MAX_DATA_SIZE = 500000
 
-def self_play(data_file_path, n=5000):
+# class TensorLog:
+#     def __init__(self):
+#         self.log_entries = []
+#         self.calls = 0
+
+#     def add_entry(self, entry):
+#         self.log_entries.append(entry)
+#         self.calls += 1
+
+#     def get_entries(self):
+#         return self.log_entries
+
+def self_play(data_file_path, n=1000):
     # Load previous game list
     if os.path.exists(data_file_path):
         with open(data_file_path, 'rb') as file:

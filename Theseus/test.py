@@ -1,2 +1,11 @@
-import sys
-print(sys.path)
+import os
+import pickle
+
+
+if os.path.exists('Theseus/data.pkl'):
+        with open('Theseus/data.pkl', 'rb') as file:
+            data = pickle.load(file)
+else:
+    data = []
+
+print(data[1][0])

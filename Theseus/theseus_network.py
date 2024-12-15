@@ -102,26 +102,26 @@ class PolicyNet(nn.Module):
     
 
 class TheseusNetwork(nn.Module):
-  def __init__(self):
-    super().__init__()
-    self.main_network = MainResNet(RESIDUAL_BLOCK_COUNT, INPUT_CHANNELS, HIDDEN_CHANNELS)
+    def __init__(self):
+        super().__init__()
+        self.main_network = MainResNet(RESIDUAL_BLOCK_COUNT, INPUT_CHANNELS, HIDDEN_CHANNELS)
 
-    self.slide_policy_network = PolicyNet(HIDDEN_CHANNELS, SLIDE_POLICY_CHANNELS)
+        self.slide_policy_network = PolicyNet(HIDDEN_CHANNELS, SLIDE_POLICY_CHANNELS)
 
-    self.move_policy_network = PolicyNet(HIDDEN_CHANNELS, MOVE_POLICY_CHANNELS)
+        self.move_policy_network = PolicyNet(HIDDEN_CHANNELS, MOVE_POLICY_CHANNELS)
 
-    self.value_network = ValueNet(HIDDEN_CHANNELS, VALUE_CHANNELS)
-    
+        self.value_network = ValueNet(HIDDEN_CHANNELS, VALUE_CHANNELS)
+        
 
-  def forward(self, x, slide=True, move=True, value=True):
-    new_x = self.main_network(x)
-    p = None
-    m = None
-    y = None
-    if slide:
-        p = self.slide_policy_network(new_x)
-    if move:
-        m = self.move_policy_network(new_x)
-    if value:
-        y = self.value_network(new_x)
-    return p, m, y
+    def forward(self, x, slide=True, move=True, value=True):
+        new_x = self.main_network(x)
+        p = None
+        m = None
+        y = None
+        if slide:
+            p = self.slide_policy_network(new_x)
+        if move:
+            m = self.move_policy_network(new_x)
+        if value:
+            y = self.value_network(new_x)
+        return p, m, y
