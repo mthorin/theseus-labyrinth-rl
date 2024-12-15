@@ -16,6 +16,7 @@ CURRENT_BEST_MODEL_PATH = 'Theseus/theseus_best.pt'
 def evaluate(new_model, n=100):
     if not os.path.exists(CURRENT_BEST_MODEL_PATH):
         torch.save(new_model.state_dict(), CURRENT_BEST_MODEL_PATH)
+        return
         
     ruleset = RuleSet()
     utils.enable_colours(True)
@@ -26,7 +27,8 @@ def evaluate(new_model, n=100):
     curr_best_network.eval()
 
     # initialize 
-    network = new_model
+    network = new_model.eval()
+
 
     wins = 0
 

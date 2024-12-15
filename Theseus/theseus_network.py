@@ -33,7 +33,7 @@ class ResidualBlock(nn.Module):
 
 
 class MainResNet(nn.Module):
-    def __init__(self, layers, in_channels, out_channels):
+    def __init__(self, layers_numbers, in_channels, out_channels):
         super(MainResNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
@@ -41,7 +41,7 @@ class MainResNet(nn.Module):
         
         # Stacked residual blocks
         layers = []
-        for n in range(layers):
+        for n in range(layers_numbers):
             layers.append(ResidualBlock(out_channels))
 
         self.residual_blocks = nn.Sequential(*layers)
@@ -61,10 +61,10 @@ class ValueNet(nn.Module):
         super(ValueNet, self).__init__()
         self.in_channels = in_channels
         self.conv = nn.Conv2d(in_channels, conv_channels, kernel_size=1, stride=2, padding=3, bias=False)
-        self.bn = nn.BatchNorm2d(out_channels)
+        self.bn = nn.BatchNorm2d(conv_channels)
         self.relu = nn.ReLU(inplace=True)
 
-        self.fc1 = nn.Linear(conv_channels * 49, intermediate_channels)
+        self.fc1 = nn.Linear(81, intermediate_channels)
         self.fc2 = nn.Linear(intermediate_channels, out_channels)
 
     def forward(self, x):
@@ -72,7 +72,7 @@ class ValueNet(nn.Module):
         x = self.bn(x)
         x = self.relu(x)
         
-        x = torch.flatten(x, 1)
+        x = x.view(x.size(0), -1)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.fc2(x)
@@ -85,17 +85,17 @@ class PolicyNet(nn.Module):
         super(PolicyNet, self).__init__()
         self.in_channels = in_channels
         self.conv = nn.Conv2d(in_channels, conv_channels, kernel_size=1, stride=2, padding=3, bias=False)
-        self.bn = nn.BatchNorm2d(out_channels)
+        self.bn = nn.BatchNorm2d(conv_channels)
         self.relu = nn.ReLU(inplace=True)
 
-        self.fc1 = nn.Linear(conv_channels * 49, out_channels)
+        self.fc1 = nn.Linear(162, out_channels)
 
     def forward(self, x):
         x = self.conv(x)
         x = self.bn(x)
         x = self.relu(x)
         
-        x = torch.flatten(x, 1)
+        x = x.view(x.size(0), -1)
         x = self.fc1(x)
         
         return x
