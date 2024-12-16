@@ -24,12 +24,12 @@ def evaluate(device, new_model, best_model_path, n=100):
     curr_best_network = TheseusNetwork()
     curr_best_network.load_state_dict(torch.load(best_model_path, weights_only=True))
     curr_best_network.eval()
-    curr_best_network = curr_best_network.to(device)
+    # curr_best_network = curr_best_network.to(device)
 
     # initialize 
     network = new_model.eval()
-    network = network.to(device)
-
+    # network = network.to(device)
+    network = network.to(torch.device("cpu"))
 
     wins = 0
 

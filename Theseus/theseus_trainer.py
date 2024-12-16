@@ -41,9 +41,9 @@ def main():
 
     while 1:
         latest_version += 1
-        
+
         print(f"Optimization, evaluation, and self-play for version {latest_version}")
-        new_model = optimize(device, DATA_FILE_PATH, latest_file, n_iterations=200000)
+        new_model = optimize(device, DATA_FILE_PATH, latest_file, n_iterations=5000)
         torch.save(new_model.state_dict(), f"{ARCHIVE_LOCATION}/theseus_v{latest_version}.pt")
 
         evaluate(device, new_model, CURRENT_BEST_MODEL_PATH)
