@@ -6,7 +6,6 @@ from Labyrinth.labyrinth import Labyrinth, RuleSet
 from Labyrinth.theseus import Theseus
 from Labyrinth.player import all_player_colours
 from theseus_network import TheseusNetwork
-from evaluator import CURRENT_BEST_MODEL_PATH
 
 import pickle
 from tqdm import tqdm
@@ -50,7 +49,7 @@ class TensorLog:
     def get_all_entries(self):
         return self.entries
 
-def self_play(data_file_path, n=1000):
+def self_play(data_file_path, best_model_path, n=1000):
     # Load previous game list
     if os.path.exists(data_file_path):
         with open(data_file_path, 'rb') as file:
@@ -63,7 +62,7 @@ def self_play(data_file_path, n=1000):
 
     # initialize network
     network = TheseusNetwork()
-    network.load_state_dict(torch.load(CURRENT_BEST_MODEL_PATH, weights_only=True))
+    network.load_state_dict(torch.load(best_model_path, weights_only=True))
     network.eval()
 
     loop = tqdm(total=n, position=0, leave=False)
@@ -77,8 +76,9 @@ def self_play(data_file_path, n=1000):
         while lab.who_won() is None:
             lab.make_turn()
             turns += 1
+            loop.set_description('Turn: {}'.format(turns))
 
-        for colour, results in game_data.items():
+        for colour, results in game_data.get_all_entries().items():
             value = 0
             if colour == lab.who_won().colour:
                 value = 1
@@ -89,7 +89,6 @@ def self_play(data_file_path, n=1000):
                     data.pop(0)
 
         loop.update(1)
-        loop.set_description('Games Played: {}'.format(n))
 
     # Save list
     with open(data_file_path, 'wb') as file:

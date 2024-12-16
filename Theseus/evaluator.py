@@ -11,11 +11,10 @@ from tqdm import tqdm
 
 from theseus_network import TheseusNetwork
 
-CURRENT_BEST_MODEL_PATH = 'Theseus/theseus_best.pt'
 
-def evaluate(new_model, n=100):
-    if not os.path.exists(CURRENT_BEST_MODEL_PATH):
-        torch.save(new_model.state_dict(), CURRENT_BEST_MODEL_PATH)
+def evaluate(new_model, best_model_path, n=100):
+    if not os.path.exists(best_model_path):
+        torch.save(new_model.state_dict(), best_model_path)
         return
         
     ruleset = RuleSet()
@@ -23,7 +22,7 @@ def evaluate(new_model, n=100):
 
     # initialize current best network
     curr_best_network = TheseusNetwork()
-    curr_best_network.load_state_dict(torch.load(CURRENT_BEST_MODEL_PATH, weights_only=True))
+    curr_best_network.load_state_dict(torch.load(best_model_path, weights_only=True))
     curr_best_network.eval()
 
     # initialize 
@@ -46,14 +45,14 @@ def evaluate(new_model, n=100):
         while lab.who_won() is None:
             lab.make_turn()
             turns += 1
+            loop.set_description('Turn: {} Win rate: {}'.format(turns, wins/(i+1)))
 
         if lab.who_won().colour == colour:
             wins += 1 
 
         loop.update(1)
-        loop.set_description('Games Played: {} Win rate: {}'.format(n, wins/n))
 
     if wins/n > .275:
         # replace curr_best_network on disk
-        torch.save(network.state_dict(), CURRENT_BEST_MODEL_PATH)
+        torch.save(network.state_dict(), best_model_path)
         

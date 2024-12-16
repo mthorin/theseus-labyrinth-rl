@@ -5,8 +5,13 @@ from evaluator import evaluate
 from self_play import self_play
 from optimization import optimize
 
-DATA_FILE_PATH = 'Theseus/data.pkl'
-ARCHIVE_LOCATION = 'Theseus/model_archive'
+# DATA_FILE_PATH = 'Theseus/data.pkl'
+# ARCHIVE_LOCATION = 'Theseus/model_archive'
+# CURRENT_BEST_MODEL_PATH = 'Theseus/theseus_best.pt'
+
+DATA_FILE_PATH = 'data.pkl'
+ARCHIVE_LOCATION = 'model_archive'
+CURRENT_BEST_MODEL_PATH = 'theseus_best.pt'
 
 def find_latest_versioned_file(folder_path):
     # Regular expression to match files ending with "vX" where X is a version number
@@ -37,10 +42,10 @@ def main():
     while 1:
         latest_version += 1
         print(f"Optimization, evaluation, and self-play for version {latest_version}")
-        new_model = optimize(device, DATA_FILE_PATH, f"{ARCHIVE_LOCATION}/{latest_file}", n_iterations=5000)
+        new_model = optimize(device, DATA_FILE_PATH, f"{ARCHIVE_LOCATION}/{latest_file}", n_iterations=50)
         torch.save(new_model.state_dict(), f"{ARCHIVE_LOCATION}/theseus_v{latest_version}.pt")
-        evaluate(new_model)
-        self_play(DATA_FILE_PATH)
+        evaluate(new_model, CURRENT_BEST_MODEL_PATH)
+        self_play(DATA_FILE_PATH, CURRENT_BEST_MODEL_PATH)
 
 if __name__ == '__main__':
     main()
