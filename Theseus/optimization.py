@@ -1,4 +1,3 @@
-import os
 import pickle
 import torch
 from tqdm import tqdm
@@ -63,6 +62,8 @@ def optimize(device, data_file_path, latest_model_path, n_iterations=10000, lr=1
     # loss function
     loss_fn = TheseusLoss()
 
+    losses = []
+
     # Start main loop
     loop = tqdm(total=n_iterations, position=0, leave=False)
     for _ in range(n_iterations):
@@ -72,15 +73,16 @@ def optimize(device, data_file_path, latest_model_path, n_iterations=10000, lr=1
 
         p_logits, m_logits, y_logits = network(x)
         loss = loss_fn(p_logits, p, m_logits, m, y_logits, y, network)
-
-        if torch.isnan(loss):
-                print("NaN detected in loss! Stopping training.")
         
         loss.backward()
         optim.step()
 
+        losses.append(loss.item())
+        if len(losses) > 10000:
+            losses.pop(0)
+
         # Print results
         loop.update(1)
-        loop.set_description("Loss: {}".format(loss.item()))
+        loop.set_description("Recent Avg. Loss: {} Loss: {}".format(sum(losses) / len(losses), loss.item()))
 
     return network

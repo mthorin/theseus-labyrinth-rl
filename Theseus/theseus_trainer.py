@@ -29,7 +29,7 @@ def find_latest_versioned_file(folder_path):
             # Update the latest file and version if this version is higher
             if version > latest_version:
                 latest_version = version
-                latest_file = filename
+                latest_file = f"{ARCHIVE_LOCATION}/{filename}"
     
     return latest_file, latest_version
 
@@ -42,7 +42,7 @@ def main():
     while 1:
         latest_version += 1
         print(f"Optimization, evaluation, and self-play for version {latest_version}")
-        new_model = optimize(device, DATA_FILE_PATH, f"{ARCHIVE_LOCATION}/{latest_file}", n_iterations=50)
+        new_model = optimize(device, DATA_FILE_PATH, latest_file, n_iterations=200000)
         torch.save(new_model.state_dict(), f"{ARCHIVE_LOCATION}/theseus_v{latest_version}.pt")
         evaluate(new_model, CURRENT_BEST_MODEL_PATH)
         self_play(DATA_FILE_PATH, CURRENT_BEST_MODEL_PATH)
