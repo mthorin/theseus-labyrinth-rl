@@ -1,11 +1,2 @@
-import os
-import pickle
-
-
-if os.path.exists('Theseus/data.pkl'):
-        with open('Theseus/data.pkl', 'rb') as file:
-            data = pickle.load(file)
-else:
-    data = []
-
-print(len(data))
+import torch
+print(torch.backends.mps.is_available())  # Should return True if supported

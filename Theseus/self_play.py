@@ -49,7 +49,7 @@ class TensorLog:
     def get_all_entries(self):
         return self.entries
 
-def self_play(data_file_path, best_model_path, n=1000):
+def self_play(device, data_file_path, best_model_path, n=1000):
     # Load previous game list
     if os.path.exists(data_file_path):
         with open(data_file_path, 'rb') as file:
@@ -64,11 +64,12 @@ def self_play(data_file_path, best_model_path, n=1000):
     network = TheseusNetwork()
     network.load_state_dict(torch.load(best_model_path, weights_only=True))
     network.eval()
+    network = network.to(device)
 
     loop = tqdm(total=n, position=0, leave=False)
     for i in range(n):
         game_data = TensorLog()
-        players = [Theseus(colour, network, exploration_weight=1, data_bank=game_data.get_log_function(colour)) for colour in all_player_colours]
+        players = [Theseus(colour, network, device, exploration_weight=1, data_bank=game_data.get_log_function(colour)) for colour in all_player_colours]
 
         lab = Labyrinth(ruleset, players)
 

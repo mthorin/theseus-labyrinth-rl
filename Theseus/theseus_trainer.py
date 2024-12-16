@@ -34,7 +34,7 @@ def find_latest_versioned_file(folder_path):
     return latest_file, latest_version
 
 def main():
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    device = torch.device("mps")
 
     # find latest model
     latest_file, latest_version = find_latest_versioned_file(ARCHIVE_LOCATION)
@@ -44,8 +44,8 @@ def main():
         print(f"Optimization, evaluation, and self-play for version {latest_version}")
         new_model = optimize(device, DATA_FILE_PATH, latest_file, n_iterations=200000)
         torch.save(new_model.state_dict(), f"{ARCHIVE_LOCATION}/theseus_v{latest_version}.pt")
-        evaluate(new_model, CURRENT_BEST_MODEL_PATH)
-        self_play(DATA_FILE_PATH, CURRENT_BEST_MODEL_PATH)
+        evaluate(device, new_model, CURRENT_BEST_MODEL_PATH)
+        self_play(device, DATA_FILE_PATH, CURRENT_BEST_MODEL_PATH)
 
 if __name__ == '__main__':
     main()
